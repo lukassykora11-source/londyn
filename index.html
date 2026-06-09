@@ -55,6 +55,12 @@
   .feedback{margin-top:1.5vh; font-size:3vh; font-weight:bold; min-height:1.2em;}
   .feedback.ok{color:var(--ok);}
   .feedback.no{color:var(--no);}
+  .fact{
+    margin-top:1.2vh; font-size:2.2vh; line-height:1.3; font-weight:600;
+    background:var(--green); color:var(--dark);
+    border:0.3vh solid var(--dark); border-radius:1.5vh;
+    padding:1.4vh 1.6vw; display:none;
+  }
   .next{
     margin-top:1.5vh; width:100%; font:inherit; font-size:2.8vh; font-weight:bold;
     padding:1.6vh; border-radius:1.5vh; border:none; background:var(--red); color:#fff;
@@ -96,7 +102,7 @@
 
 <script>
 const IMG_DIR = "images/";
-const JMENO = "Kryštof";
+
 
 /* Náhradní kresby pro případ, že fotka chybí */
 const FALLBACK = {
@@ -117,48 +123,97 @@ function pic(key, file){
   return `<img src="${IMG_DIR}${file}" alt="${key}" onerror="this.outerHTML=FALLBACK_HTML['${key}']">`;
 }
 
-/* ====== OTÁZKY (12) ====== */
+/* ====== OTÁZKY (12) ======
+   "miss" = vtipné hlášky vázané přímo k tématu otázky (vyberou se náhodně) */
 const QUESTIONS = [
   { key:"mapa", file:"mapa.jpg", q:"Ve které zemi leží Londýn?",
-    opts:["Velká Británie (Anglie)","Francie","Itálie","Španělsko"], correct:0 },
+    opts:["Velká Británie (Anglie)","Francie","Itálie","Španělsko"], correct:0,
+    miss:["Hups! 🗺️ Asi sis spletl mapu — Londýn je o kus jinde!",
+          "Jejda! 🌍 Tam by ses Londýna nedočkal, je jinde!",
+          "Vedle! 🧭 Kompas tě trošku zradil, zkus to znovu!"],
+    fact:"Víte, že… 🇬🇧 Londýn je hlavní město Velké Británie a žije tu víc lidí než v celém Česku dohromady!" },
   { key:"temze", file:"temze.jpg", q:"Jak se jmenuje řeka, která teče Londýnem?",
-    opts:["Temže","Vltava","Dunaj","Nil"], correct:0 },
+    opts:["Temže","Vltava","Dunaj","Nil"], correct:0,
+    miss:["Žbluňk! 🌊 Tahle řeka teče úplně jinudy!",
+          "Plác! 🐟 Spletl sis řeku — tahle Londýnem neteče!",
+          "Hups! 🚣 Tudy by sis do Londýna nedoplaval!"],
+    fact:"Víte, že… 🌉 Přes Temži vede přes 30 mostů a kdysi po ní pluly i velké zaoceánské lodě!" },
   { key:"flag", file:"flag.jpg", q:"Asi kolik lidí žije v Londýně?",
-    opts:["Skoro 9 milionů","Asi 100 lidí","Asi 5 tisíc","Milion miliard"], correct:0 },
+    opts:["Skoro 9 milionů","Asi 100 lidí","Asi 5 tisíc","Milion miliard"], correct:0,
+    miss:["Hups! 🧮 To by se do Londýna ani nevešli, nebo by byl skoro prázdný!",
+          "Jejda! 👥 Tolik lidí to fakt není — zkus to znovu!",
+          "Vedle! 🔢 S počítáním to ještě potrénujeme!"],
+    fact:"Víte, že… 🗣️ V Londýně se mluví víc než 300 různými jazyky — je to jedno z nejpestřejších měst světa!" },
   { key:"bigben", file:"bigben.jpg", q:"Co je Big Ben?",
-    opts:["Slavná věž s velkými hodinami","Obří hamburger","Fotbalista","Druh čaje"], correct:0 },
+    opts:["Slavná věž s velkými hodinami","Obří hamburger","Fotbalista","Druh čaje"], correct:0,
+    miss:["Tik tak! ⏰ Big Ben není k jídlu ani na hraní — je to věž s hodinami!",
+          "Hups! 🕰️ Big Ben ti odbíjí špatnou odpověď!",
+          "Jejda! 🔔 To nebylo ono — Big Ben je slavná hodinová věž!"],
+    fact:"Víte, že… 🔔 Big Ben je vlastně jméno toho velkého zvonu uvnitř věže — a slyšet ho jde i přes celé okolí!" },
   { key:"bus", file:"bus.jpg", q:"Jak se říká červenému autobusu, který má dvě patra?",
-    opts:["Double-decker (dvoupatrový)","Helikoptéra","Tramvaj","Kolotoč"], correct:0 },
+    opts:["Double-decker (dvoupatrový)","Helikoptéra","Tramvaj","Kolotoč"], correct:0,
+    miss:["Brm brm! 🚌 Tímhle by ses po Londýně nesvezl, zkus to znovu!",
+          "Hups! 🚍 Spletl sis dopravní prostředek!",
+          "Vedle! 🎟️ Do patra téhle věci bys nevylezl!"],
+    fact:"Víte, že… 🚌 Z horního patra double-deckeru je krásně vidět celé město — je to skoro jako vyhlídka!" },
   { key:"buckingham", file:"buckingham.jpg", q:"Kdo bydlí v Buckinghamském paláci?",
-    opts:["Královská rodina","Dinosauři","Pan učitel","Spider-Man"], correct:0 },
+    opts:["Královská rodina","Dinosauři","Pan učitel","Spider-Man"], correct:0,
+    miss:["Hups! 👑 V paláci bys tohohle nikdy nepotkal!",
+          "Jejda! 🏰 V Buckinghamu fakt nebydlí — zkus to znovu!",
+          "Vedle! 🤴 Tady přebývá někdo mnohem královštější!"],
+    fact:"Víte, že… 👑 Palác má přes 700 místností! Když vlaje vlajka na střeše, znamená to, že je král doma." },
   { key:"koruna", file:"koruna.jpg", q:"Kdo je hlavou Velké Británie?",
-    opts:["Král","Kapitán pirátů","Robot","Klaun"], correct:0 },
+    opts:["Král","Kapitán pirátů","Robot","Klaun"], correct:0,
+    miss:["Hups! 👑 Korunu na hlavě tenhle nenosí!",
+          "Jejda! 🎩 To by byla teda zvláštní hlava státu!",
+          "Vedle! 🤴 Zkus si představit, kdo nosí korunu!"],
+    fact:"Víte, že… 🤴 Británii vládne král, ale o zákonech rozhoduje parlament — král to spíš slavnostně zastupuje." },
   { key:"towerbridge", file:"towerbridge.jpg", q:"Co je Tower Bridge?",
-    opts:["Slavný most, který se umí zvednout","Tunel pod mořem","Velká houpačka","Strom"], correct:0 },
+    opts:["Slavný most, který se umí zvednout","Tunel pod mořem","Velká houpačka","Strom"], correct:0,
+    miss:["Hups! 🌉 Po tomhle bys přes Temži nepřešel!",
+          "Jejda! 🚢 Tower Bridge se umí zvednout, aby propustil lodě — tohle ne!",
+          "Vedle! 🏗️ Spletl sis to, je to slavný most!"],
+    fact:"Víte, že… 🚢 Tower Bridge se umí rozevřít a zvednout do výšky, aby pod ním propluly velké lodě!" },
   { key:"westminster", file:"westminster.jpg", q:"Co je Westminster?",
-    opts:["Místo, kde rozhodují o zákonech (parlament)","Zmrzlinárna","Vesmírná raketa","Bazén"], correct:0 },
+    opts:["Místo, kde rozhodují o zákonech (parlament)","Zmrzlinárna","Vesmírná raketa","Bazén"], correct:0,
+    miss:["Hups! 🏛️ Tam by ti zmrzlinu ani raketu nedali — rozhodují tam o zákonech!",
+          "Jejda! 📜 Ve Westminsteru se to neděje, zkus to znovu!",
+          "Vedle! 🗳️ To by byl teda divný parlament!"],
+    fact:"Víte, že… 🏛️ Ve Westminsteru zasedá britský parlament — je to jedna z nejstarších takových budov na světě!" },
   { key:"london_eye", file:"london_eye.jpg", q:"Co je London Eye?",
-    opts:["Obří vyhlídkové ruské kolo","Velké oko ze skla","Stroj času","Mrakodrap s tobogánem"], correct:0 },
+    opts:["Obří vyhlídkové ruské kolo","Velké oko ze skla","Stroj času","Mrakodrap s tobogánem"], correct:0,
+    miss:["Hups! 🎡 Tímhle by ses nad Londýn nepodíval — je to obří ruské kolo!",
+          "Jejda! 👁️ London Eye se sice jmenuje 'oko', ale je to vyhlídkové kolo!",
+          "Vedle! 🎠 Točí se to, ale jinak, než si myslíš!"],
+    fact:"Víte, že… 🎡 London Eye je 135 metrů vysoké — jako 45 patrových autobusů na sobě! Jedno otočení trvá asi půl hodiny." },
   { key:"wembley", file:"wembley.jpg", q:"K čemu slouží stadion Wembley?",
-    opts:["Hraje se tam hlavně fotbal","Pěstuje se tam zelí","Spí tam sloni","Je to obří bazén"], correct:0 },
+    opts:["Hraje se tam hlavně fotbal","Pěstuje se tam zelí","Spí tam sloni","Je to obří bazén"], correct:0,
+    miss:["Tys asi nikdy nehrál fotbal, viď? ⚽ Na Wembley se kope do míče!",
+          "Hups! 🥅 Wembley je slavný fotbalový stadion, ne tohle!",
+          "Vedle! ⚽ Gól! Ale do špatné branky — na Wembley se hraje fotbal!"],
+    fact:"Víte, že… ⚽ Na Wembley se vejde skoro 90 000 diváků — to je jako kdyby přišlo celé velké město fandit!" },
   { key:"bigben", file:"bigben.jpg", q:"Jakým jazykem se v Londýně mluví?",
-    opts:["Anglicky","Čínsky","Latinsky","Marťansky"], correct:0 },
+    opts:["Anglicky","Čínsky","Latinsky","Marťansky"], correct:0,
+    miss:["Hups! 🗣️ Tímhle by ti v Londýně nerozuměli!",
+          "Jejda! 💬 Zkus to znovu — čím se učíme ve škole na Anglii?",
+          "Vedle! 📖 Tímhle jazykem se v Londýně nedomluvíš!"],
+    fact:"Víte, že… 📚 Angličtinou dnes mluví lidé po celém světě — je to jeden z nejrozšířenějších jazyků vůbec!" },
 ];
 
-/* ====== HLÁŠKY (s Kryštofem) ====== */
+/* ====== HLÁŠKY ====== */
 const PRAISE = [
-  `Super, ${JMENO}! 🎉 Jsi fakt šikovný!`,
-  `Výborně, ${JMENO}! 🌟 Dával jsi krásně pozor!`,
-  `Bezva! 👏 ${JMENO}, máš to v hlavě jako profík!`,
-  `Paráda, ${JMENO}! 🚀 Takhle se to dělá!`,
-  `Hurá! ✨ Trefa do černého, ${JMENO}!`,
-  `Skvěle, ${JMENO}! 🏆 Jsi malý expert na Londýn!`,
-  `Jupí! 😄 Přesně tak, ${JMENO}!`,
-  `Mistrovské! 🎯 ${JMENO}, nedáš se splést!`,
-  `Bravo, ${JMENO}! 🥳 Učitelka by měla radost!`,
-  `Wow, ${JMENO}! 💪 Tohle byla hračka, co?`,
-  `Klobouk dolů, ${JMENO}! 🎩 Správně!`,
-  `Génius, ${JMENO}! 🧠 Pokračuj dál!`,
+  `Super! 🎉 To bylo šikovné!`,
+  `Výborně! 🌟 Dával jsi krásně pozor!`,
+  `Bezva! 👏 Máš to v hlavě jako profík!`,
+  `Paráda! 🚀 Takhle se to dělá!`,
+  `Hurá! ✨ Trefa do černého!`,
+  `Skvěle! 🏆 Malý expert na Londýn!`,
+  `Jupí! 😄 Přesně tak!`,
+  `Mistrovské! 🎯 Nedáš se splést!`,
+  `Bravo! 🥳 Učitelka by měla radost!`,
+  `Wow! 💪 Tohle byla hračka, co?`,
+  `Klobouk dolů! 🎩 Správně!`,
+  `Génius! 🧠 Jen tak dál!`,
 ];
 const FUNNY_MISS = [
   "Ouha! 🙈 Tohle nebylo ono — ale klobouk dolů za odvahu!",
@@ -183,6 +238,10 @@ const rnd = arr => arr[Math.floor(Math.random()*arr.length)];
 function renderQuestion(){
   answered = false;
   const item = QUESTIONS[current];
+  // zamíchej odpovědi: každá si nese info, jestli je správná
+  const shuffled = item.opts
+    .map((text,i)=>({text, correct: i===item.correct}))
+    .sort(()=>Math.random()-0.5);
   screen.innerHTML = `
     <div class="progress">Otázka ${current+1} z ${QUESTIONS.length} &nbsp; • &nbsp; Body: ${score}</div>
     <div class="qwrap">
@@ -190,9 +249,10 @@ function renderQuestion(){
       <div class="qside">
         <p class="q">${item.q}</p>
         <div class="opts">
-          ${item.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')}
+          ${shuffled.map(o=>`<button class="opt" data-correct="${o.correct}">${o.text}</button>`).join('')}
         </div>
         <div class="feedback" id="fb"></div>
+        <div class="fact" id="fact"></div>
         <button class="next" id="next">Další otázka ▶</button>
       </div>
     </div>
@@ -204,17 +264,22 @@ function renderQuestion(){
 function onAnswer(e){
   if(answered) return;
   answered = true;
-  const chosen = +e.target.dataset.i;
-  const item = QUESTIONS[current];
+  const isCorrect = e.target.dataset.correct === "true";
   const fb = document.getElementById("fb");
   screen.querySelectorAll(".opt").forEach(b=>{
     b.disabled = true;
-    const i = +b.dataset.i;
-    if(i===item.correct) b.classList.add("correct");
-    if(i===chosen && chosen!==item.correct) b.classList.add("wrong");
+    if(b.dataset.correct === "true") b.classList.add("correct"); // zvýrazni správnou
+    if(b===e.target && !isCorrect) b.classList.add("wrong");      // a chybnou volbu
   });
-  if(chosen===item.correct){ score++; fb.textContent = rnd(PRAISE); fb.className = "feedback ok"; }
-  else { fb.textContent = rnd(FUNNY_MISS); fb.className = "feedback no"; }
+  const item = QUESTIONS[current];
+  if(isCorrect){ score++; fb.textContent = rnd(PRAISE); fb.className = "feedback ok"; }
+  else {
+    const pool = (item.miss && item.miss.length) ? item.miss : FUNNY_MISS;
+    fb.textContent = rnd(pool); fb.className = "feedback no";
+  }
+  // bublina "Víte, že…" — ukáže se vždy po zodpovězení
+  const factBox = document.getElementById("fact");
+  if(item.fact){ factBox.textContent = item.fact; factBox.style.display = "block"; }
   const nx = screen.querySelector("#next");
   nx.style.display = "block";
   nx.textContent = (current === QUESTIONS.length-1) ? "Ukázat výsledek 🏁" : "Další otázka ▶";
@@ -227,10 +292,10 @@ function onNext(){
 
 function renderResult(){
   let medal, title, msg;
-  if(score === QUESTIONS.length){ medal="🥇"; title="DOKONALÉ!"; msg=`Všechno správně, ${JMENO}! Jsi opravdový znalec Londýna. Učitelka i táta jsou na tebe pyšní! 🎉`; }
-  else if(score >= 10){ medal="🥈"; title="SKVĚLÉ!"; msg=`Skoro všechno správně, ${JMENO} — pořádně jsi dával pozor!`; }
-  else if(score >= 6){ medal="🥉"; title="DOBRÁ PRÁCE!"; msg=`Hodně jsi toho zvládl, ${JMENO}. Londýn už znáš fakt dobře!`; }
-  else { medal="🎈"; title="ŠIKULA!"; msg=`Pár otázek bylo záludných — zkus kvíz ještě jednou, ${JMENO}, půjde ti to líp!`; }
+  if(score === QUESTIONS.length){ medal="🥇"; title="DOKONALÉ!"; msg=`Všechno správně! Opravdový znalec Londýna. Učitelka má radost! 🎉`; }
+  else if(score >= 10){ medal="🥈"; title="SKVĚLÉ!"; msg=`Skoro všechno správně — pořádně jsi dával pozor!`; }
+  else if(score >= 6){ medal="🥉"; title="DOBRÁ PRÁCE!"; msg=`Hodně jsi toho zvládl. Londýn už znáš fakt dobře!`; }
+  else { medal="🎈"; title="ŠIKULA!"; msg=`Pár otázek bylo záludných — zkus kvíz ještě jednou, půjde ti to líp!`; }
   screen.innerHTML = `
     <div class="result">
       <div class="medal">${medal}</div>
