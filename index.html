@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kvíz o Londýně 🇬🇧</title>
+<style>
+  :root{
+    --red:#FF442D; --dark:#3D5655; --green:#C3DCBE; --cream:#FCFAF4;
+    --blue:#1f3a93; --ok:#2e8b57; --no:#d9534f;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
+    background:var(--cream); color:var(--dark); min-height:100vh;
+    display:flex; justify-content:center; align-items:flex-start; padding:2vmin;
+  }
+  .app{width:100%; max-width:1400px;}
+  header{text-align:center; margin-bottom:1vmin;}
+  header h1{font-size:5vmin; margin:1vmin 0 0.3vmin; color:var(--red);}
+  header p{margin:0; font-size:2.6vmin; color:var(--dark);}
+  .flag-strip{height:1.2vmin; border-radius:1vmin; margin:1.5vmin 0;
+    background:linear-gradient(90deg,var(--blue) 0 33%,var(--red) 33% 66%,var(--blue) 66% 100%);}
+  .card{
+    background:#fff; border:0.5vmin solid var(--dark); border-radius:2.5vmin;
+    padding:3vmin; box-shadow:0 1.2vmin 0 var(--dark);
+  }
+  .progress{font-size:2.6vmin; color:var(--dark); margin-bottom:1.5vmin; font-weight:bold;}
+  .pic{display:flex; justify-content:center; margin:1vmin 0 2.5vmin;}
+  .pic img, .pic svg{
+    width:48vmin; height:36vmin; max-width:100%;
+    object-fit:cover; border-radius:2vmin; background:var(--green);
+    border:0.4vmin solid var(--dark);
+  }
+  .q{font-size:4vmin; font-weight:bold; margin:0 0 2.5vmin; line-height:1.25; text-align:center;}
+  .opts{display:grid; grid-template-columns:1fr 1fr; gap:2vmin;}
+  button.opt{
+    font:inherit; font-size:3vmin; text-align:center; cursor:pointer;
+    padding:2.5vmin 2vmin; border-radius:2vmin; border:0.4vmin solid var(--dark);
+    background:var(--cream); color:var(--dark); transition:transform .05s;
+  }
+  button.opt:hover{background:var(--green);}
+  button.opt:active{transform:translateY(0.4vmin);}
+  button.opt.correct{background:var(--ok); color:#fff; border-color:var(--ok);}
+  button.opt.wrong{background:var(--no); color:#fff; border-color:var(--no);}
+  button.opt:disabled{cursor:default;}
+  .feedback{margin-top:2.5vmin; font-size:3.6vmin; font-weight:bold; min-height:1.3em; text-align:center;}
+  .feedback.ok{color:var(--ok);}
+  .feedback.no{color:var(--no);}
+  .next{
+    margin-top:2.5vmin; width:100%; font:inherit; font-size:3.4vmin; font-weight:bold;
+    padding:2.2vmin; border-radius:2vmin; border:none; background:var(--red); color:#fff;
+    cursor:pointer; display:none;
+  }
+  .next:active{transform:translateY(0.4vmin);}
+  .result{text-align:center;}
+  .result h2{color:var(--red); font-size:5.5vmin; margin:1vmin 0;}
+  .score{font-size:9vmin; font-weight:bold; color:var(--dark); margin:1vmin 0;}
+  .medal{font-size:12vmin; margin:1vmin 0; line-height:1;}
+  .result p{font-size:3.2vmin;}
+  .again{
+    margin-top:2vmin; font:inherit; font-size:3.4vmin; font-weight:bold;
+    padding:2.2vmin 4vmin; border-radius:2vmin; border:none; background:var(--dark); color:#fff; cursor:pointer;
+  }
+  footer{text-align:center; font-size:1.8vmin; color:var(--dark); opacity:.6; margin-top:2vmin;}
+  @media (max-aspect-ratio:1/1){
+    .opts{grid-template-columns:1fr;}
+    header h1{font-size:7vmin;} .q{font-size:5.5vmin;} button.opt{font-size:4.5vmin;}
+    .pic img,.pic svg{width:80vmin; height:55vmin;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🇬🇧 Velký kvíz o Londýně</h1>
+    <p>Pro chytré objevitele!</p>
+    <div class="flag-strip"></div>
+  </header>
+  <div id="screen" class="card"></div>
+  <footer>Made for the best Montessori project ever ✨</footer>
+</div>
+
+<script>
+const IMG_DIR = "images/";
+const JMENO = "Kryštof";
+
+/* Náhradní kresby pro případ, že fotka chybí */
+const FALLBACK = {
+  bigben:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#9fc3d8"/><rect x="80" y="20" width="40" height="120" fill="#caa46a"/><rect x="88" y="34" width="24" height="24" fill="#fdf6e3"/></svg>`,
+  bus:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#cfe8d6"/><rect x="30" y="45" width="140" height="70" rx="10" fill="#FF442D"/><circle cx="60" cy="120" r="12"/><circle cx="140" cy="120" r="12"/></svg>`,
+  buckingham:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#bcdcff"/><rect x="20" y="60" width="160" height="70" fill="#e9e2d0"/></svg>`,
+  towerbridge:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#bfe0ef"/><rect x="50" y="40" width="22" height="80" fill="#cfd6dd"/><rect x="128" y="40" width="22" height="80" fill="#cfd6dd"/></svg>`,
+  westminster:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#cdd8e6"/><rect x="20" y="60" width="160" height="70" fill="#cbb48f"/></svg>`,
+  flag:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#1f3a93"/><rect x="84" width="32" height="150" fill="#fff"/><rect y="59" width="200" height="32" fill="#fff"/><rect x="90" width="20" height="150" fill="#FF442D"/><rect y="65" width="200" height="20" fill="#FF442D"/></svg>`,
+  mapa:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#bfe0ef"/><circle cx="92" cy="92" r="6" fill="#FF442D"/></svg>`,
+  temze:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#cfe8d6"/><path d="M0 40 Q60 70 100 60 T200 90" stroke="#3a7bd5" stroke-width="16" fill="none"/></svg>`,
+  koruna:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#f3e6c4"/><polygon points="60,100 60,60 80,80 100,50 120,80 140,60 140,100" fill="#FFD54A"/></svg>`,
+  london_eye:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#bfe0ef"/><circle cx="100" cy="75" r="55" fill="none" stroke="#888" stroke-width="4"/></svg>`,
+  wembley:`<svg viewBox="0 0 200 150"><rect width="200" height="150" fill="#bcdcff"/><ellipse cx="100" cy="100" rx="70" ry="35" fill="#cfd6dd"/><path d="M40 80 Q100 0 160 80" stroke="#888" stroke-width="4" fill="none"/></svg>`,
+};
+const FALLBACK_HTML = FALLBACK;
+function pic(key, file){
+  return `<img src="${IMG_DIR}${file}" alt="${key}" onerror="this.outerHTML=FALLBACK_HTML['${key}']">`;
+}
+
+/* ====== OTÁZKY (12) ====== */
+const QUESTIONS = [
+  { key:"mapa", file:"mapa.jpg", q:"Ve které zemi leží Londýn?",
+    opts:["Velká Británie (Anglie)","Francie","Itálie","Španělsko"], correct:0 },
+  { key:"temze", file:"temze.jpg", q:"Jak se jmenuje řeka, která teče Londýnem?",
+    opts:["Temže","Vltava","Dunaj","Nil"], correct:0 },
+  { key:"flag", file:"flag.jpg", q:"Asi kolik lidí žije v Londýně?",
+    opts:["Skoro 9 milionů","Asi 100 lidí","Asi 5 tisíc","Milion miliard"], correct:0 },
+  { key:"bigben", file:"bigben.jpg", q:"Co je Big Ben?",
+    opts:["Slavná věž s velkými hodinami","Obří hamburger","Fotbalista","Druh čaje"], correct:0 },
+  { key:"bus", file:"bus.jpg", q:"Jak se říká červenému autobusu, který má dvě patra?",
+    opts:["Double-decker (dvoupatrový)","Helikoptéra","Tramvaj","Kolotoč"], correct:0 },
+  { key:"buckingham", file:"buckingham.jpg", q:"Kdo bydlí v Buckinghamském paláci?",
+    opts:["Královská rodina","Dinosauři","Pan učitel","Spider-Man"], correct:0 },
+  { key:"koruna", file:"koruna.jpg", q:"Kdo je hlavou Velké Británie?",
+    opts:["Král","Kapitán pirátů","Robot","Klaun"], correct:0 },
+  { key:"towerbridge", file:"towerbridge.jpg", q:"Co je Tower Bridge?",
+    opts:["Slavný most, který se umí zvednout","Tunel pod mořem","Velká houpačka","Strom"], correct:0 },
+  { key:"westminster", file:"westminster.jpg", q:"Co je Westminster?",
+    opts:["Místo, kde rozhodují o zákonech (parlament)","Zmrzlinárna","Vesmírná raketa","Bazén"], correct:0 },
+  { key:"london_eye", file:"london_eye.jpg", q:"Co je London Eye?",
+    opts:["Obří vyhlídkové ruské kolo","Velké oko ze skla","Stroj času","Mrakodrap s tobogánem"], correct:0 },
+  { key:"wembley", file:"wembley.jpg", q:"K čemu slouží stadion Wembley?",
+    opts:["Hraje se tam hlavně fotbal","Pěstuje se tam zelí","Spí tam sloni","Je to obří bazén"], correct:0 },
+  { key:"bigben", file:"bigben.jpg", q:"Jakým jazykem se v Londýně mluví?",
+    opts:["Anglicky","Čínsky","Latinsky","Marťansky"], correct:0 },
+];
+
+/* ====== HLÁŠKY (s Kryštofem) ====== */
+const PRAISE = [
+  `Super, ${JMENO}! 🎉 Jsi fakt šikovný!`,
+  `Výborně, ${JMENO}! 🌟 Dával jsi krásně pozor!`,
+  `Bezva! 👏 ${JMENO}, máš to v hlavě jako profík!`,
+  `Paráda, ${JMENO}! 🚀 Takhle se to dělá!`,
+  `Hurá! ✨ Trefa do černého, ${JMENO}!`,
+  `Skvěle, ${JMENO}! 🏆 Jsi malý expert na Londýn!`,
+  `Jupí! 😄 Přesně tak, ${JMENO}!`,
+  `Mistrovské! 🎯 ${JMENO}, nedáš se splést!`,
+  `Bravo, ${JMENO}! 🥳 Učitelka by měla radost!`,
+  `Wow, ${JMENO}! 💪 Tohle byla hračka, co?`,
+  `Klobouk dolů, ${JMENO}! 🎩 Správně!`,
+  `Génius, ${JMENO}! 🧠 Pokračuj dál!`,
+];
+const FUNNY_MISS = [
+  "Ouha! 🙈 Tohle nebylo ono — ale klobouk dolů za odvahu!",
+  "Hupsík! 🐸 Vedle jak ta jedle, zkus to příště!",
+  "Jejda! 🍌 Skoro jako šlápnout na banán — nevadí!",
+  "Pozor, špatná odbočka! 🚌 Autobus nás veze jinam.",
+  "Húúú! 👻 Tuhle si zapamatuj, je záludná.",
+  "Aj aj! 🐙 Chobotnice by to taky netrefila, žádný strach.",
+  "Mňau! 🐱 Vedle, ale kočka by to taky nedala.",
+  "Žbluňk! 🐟 Spadlo to do Temže, lovíme dál!",
+  "Och! 🎩 Královna pokrčila rameny — zkus to znova příště!",
+  "Bum! 💥 Vedle, ale objevitelé se nikdy nevzdávají!",
+  "Jejdamane! 🦔 Trošku vedle, ale příště to dáš!",
+  "Pšššt! 🤫 To nebylo ono, ale nikomu to neřekneme.",
+];
+
+/* ====== LOGIKA ====== */
+let current = 0, score = 0, answered = false;
+const screen = document.getElementById("screen");
+const rnd = arr => arr[Math.floor(Math.random()*arr.length)];
+
+function renderQuestion(){
+  answered = false;
+  const item = QUESTIONS[current];
+  screen.innerHTML = `
+    <div class="progress">Otázka ${current+1} z ${QUESTIONS.length} &nbsp; • &nbsp; Body: ${score}</div>
+    <div class="pic">${pic(item.key, item.file)}</div>
+    <p class="q">${item.q}</p>
+    <div class="opts">
+      ${item.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')}
+    </div>
+    <div class="feedback" id="fb"></div>
+    <button class="next" id="next">Další otázka ▶</button>
+  `;
+  screen.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",onAnswer));
+  screen.querySelector("#next").addEventListener("click",onNext);
+}
+
+function onAnswer(e){
+  if(answered) return;
+  answered = true;
+  const chosen = +e.target.dataset.i;
+  const item = QUESTIONS[current];
+  const fb = document.getElementById("fb");
+  screen.querySelectorAll(".opt").forEach(b=>{
+    b.disabled = true;
+    const i = +b.dataset.i;
+    if(i===item.correct) b.classList.add("correct");
+    if(i===chosen && chosen!==item.correct) b.classList.add("wrong");
+  });
+  if(chosen===item.correct){ score++; fb.textContent = rnd(PRAISE); fb.className = "feedback ok"; }
+  else { fb.textContent = rnd(FUNNY_MISS); fb.className = "feedback no"; }
+  const nx = screen.querySelector("#next");
+  nx.style.display = "block";
+  nx.textContent = (current === QUESTIONS.length-1) ? "Ukázat výsledek 🏁" : "Další otázka ▶";
+}
+
+function onNext(){
+  if(current < QUESTIONS.length-1){ current++; renderQuestion(); }
+  else renderResult();
+}
+
+function renderResult(){
+  let medal, title, msg;
+  if(score === QUESTIONS.length){ medal="🥇"; title="DOKONALÉ!"; msg=`Všechno správně, ${JMENO}! Jsi opravdový znalec Londýna. Učitelka i táta jsou na tebe pyšní! 🎉`; }
+  else if(score >= 10){ medal="🥈"; title="SKVĚLÉ!"; msg=`Skoro všechno správně, ${JMENO} — pořádně jsi dával pozor!`; }
+  else if(score >= 6){ medal="🥉"; title="DOBRÁ PRÁCE!"; msg=`Hodně jsi toho zvládl, ${JMENO}. Londýn už znáš fakt dobře!`; }
+  else { medal="🎈"; title="ŠIKULA!"; msg=`Pár otázek bylo záludných — zkus kvíz ještě jednou, ${JMENO}, půjde ti to líp!`; }
+  screen.innerHTML = `
+    <div class="result">
+      <div class="medal">${medal}</div>
+      <h2>${title}</h2>
+      <div class="score">${score} / ${QUESTIONS.length}</div>
+      <p>${msg}</p>
+      <button class="again" id="again">Hrát znovu 🔄</button>
+    </div>`;
+  screen.querySelector("#again").addEventListener("click",()=>{ current=0; score=0; renderQuestion(); });
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
