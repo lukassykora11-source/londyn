@@ -13,61 +13,73 @@
   html,body{height:100%;}
   body{
     margin:0; font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
-    background:var(--cream); color:var(--dark); min-height:100vh;
-    display:flex; justify-content:center; align-items:flex-start; padding:2vmin;
+    background:var(--cream); color:var(--dark);
+    height:100vh; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    padding:1.5vh 2vw;
   }
-  .app{width:100%; max-width:1400px;}
-  header{text-align:center; margin-bottom:1vmin;}
-  header h1{font-size:5vmin; margin:1vmin 0 0.3vmin; color:var(--red);}
-  header p{margin:0; font-size:2.6vmin; color:var(--dark);}
-  .flag-strip{height:1.2vmin; border-radius:1vmin; margin:1.5vmin 0;
+  .app{width:100%; max-width:1500px; display:flex; flex-direction:column; height:100%;
+    justify-content:center;}
+  header{text-align:center; flex:0 0 auto;}
+  header h1{font-size:4.2vh; margin:0; color:var(--red);}
+  header p{margin:0.3vh 0 0; font-size:2.2vh; color:var(--dark);}
+  .flag-strip{height:1vh; border-radius:1vh; margin:1vh 0;
     background:linear-gradient(90deg,var(--blue) 0 33%,var(--red) 33% 66%,var(--blue) 66% 100%);}
   .card{
-    background:#fff; border:0.5vmin solid var(--dark); border-radius:2.5vmin;
-    padding:3vmin; box-shadow:0 1.2vmin 0 var(--dark);
+    background:#fff; border:0.35vh solid var(--dark); border-radius:2vh;
+    padding:2vh 2.5vw; box-shadow:0 0.8vh 0 var(--dark);
+    flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:center;
   }
-  .progress{font-size:2.6vmin; color:var(--dark); margin-bottom:1.5vmin; font-weight:bold;}
-  .pic{display:flex; justify-content:center; margin:1vmin 0 2.5vmin;}
+  .progress{font-size:2.2vh; color:var(--dark); margin-bottom:1vh; font-weight:bold; text-align:center; flex:0 0 auto;}
+  /* hlavní část: obrázek vlevo, otázka+odpovědi vpravo */
+  .qwrap{display:flex; gap:2.5vw; align-items:center; flex:1 1 auto; min-height:0;}
+  .pic{flex:0 0 38%; display:flex; justify-content:center; align-items:center; height:100%;}
   .pic img, .pic svg{
-    width:48vmin; height:36vmin; max-width:100%;
-    object-fit:cover; border-radius:2vmin; background:var(--green);
-    border:0.4vmin solid var(--dark);
+    width:100%; max-height:52vh;
+    object-fit:cover; border-radius:1.5vh; background:var(--green);
+    border:0.35vh solid var(--dark);
   }
-  .q{font-size:4vmin; font-weight:bold; margin:0 0 2.5vmin; line-height:1.25; text-align:center;}
-  .opts{display:grid; grid-template-columns:1fr 1fr; gap:2vmin;}
+  .qside{flex:1 1 auto; display:flex; flex-direction:column; justify-content:center; min-width:0;}
+  .q{font-size:3.4vh; font-weight:bold; margin:0 0 1.8vh; line-height:1.2;}
+  .opts{display:grid; grid-template-columns:1fr 1fr; gap:1.4vh 1.4vw;}
   button.opt{
-    font:inherit; font-size:3vmin; text-align:center; cursor:pointer;
-    padding:2.5vmin 2vmin; border-radius:2vmin; border:0.4vmin solid var(--dark);
+    font:inherit; font-size:2.5vh; text-align:center; cursor:pointer;
+    padding:1.8vh 1vw; border-radius:1.5vh; border:0.35vh solid var(--dark);
     background:var(--cream); color:var(--dark); transition:transform .05s;
   }
   button.opt:hover{background:var(--green);}
-  button.opt:active{transform:translateY(0.4vmin);}
+  button.opt:active{transform:translateY(0.3vh);}
   button.opt.correct{background:var(--ok); color:#fff; border-color:var(--ok);}
   button.opt.wrong{background:var(--no); color:#fff; border-color:var(--no);}
   button.opt:disabled{cursor:default;}
-  .feedback{margin-top:2.5vmin; font-size:3.6vmin; font-weight:bold; min-height:1.3em; text-align:center;}
+  .feedback{margin-top:1.5vh; font-size:3vh; font-weight:bold; min-height:1.2em;}
   .feedback.ok{color:var(--ok);}
   .feedback.no{color:var(--no);}
   .next{
-    margin-top:2.5vmin; width:100%; font:inherit; font-size:3.4vmin; font-weight:bold;
-    padding:2.2vmin; border-radius:2vmin; border:none; background:var(--red); color:#fff;
+    margin-top:1.5vh; width:100%; font:inherit; font-size:2.8vh; font-weight:bold;
+    padding:1.6vh; border-radius:1.5vh; border:none; background:var(--red); color:#fff;
     cursor:pointer; display:none;
   }
-  .next:active{transform:translateY(0.4vmin);}
-  .result{text-align:center;}
-  .result h2{color:var(--red); font-size:5.5vmin; margin:1vmin 0;}
-  .score{font-size:9vmin; font-weight:bold; color:var(--dark); margin:1vmin 0;}
-  .medal{font-size:12vmin; margin:1vmin 0; line-height:1;}
-  .result p{font-size:3.2vmin;}
+  .next:active{transform:translateY(0.3vh);}
+  .result{text-align:center; margin:auto;}
+  .result h2{color:var(--red); font-size:5vh; margin:1vh 0;}
+  .score{font-size:8vh; font-weight:bold; color:var(--dark); margin:1vh 0;}
+  .medal{font-size:11vh; margin:0; line-height:1;}
+  .result p{font-size:2.8vh; max-width:30ch; margin:1vh auto;}
   .again{
-    margin-top:2vmin; font:inherit; font-size:3.4vmin; font-weight:bold;
-    padding:2.2vmin 4vmin; border-radius:2vmin; border:none; background:var(--dark); color:#fff; cursor:pointer;
+    margin-top:1.5vh; font:inherit; font-size:2.8vh; font-weight:bold;
+    padding:1.6vh 3vw; border-radius:1.5vh; border:none; background:var(--dark); color:#fff; cursor:pointer;
   }
-  footer{text-align:center; font-size:1.8vmin; color:var(--dark); opacity:.6; margin-top:2vmin;}
-  @media (max-aspect-ratio:1/1){
+  footer{text-align:center; font-size:1.5vh; color:var(--dark); opacity:.6; margin-top:1vh; flex:0 0 auto;}
+  /* Mobil / na výšku: poskládat pod sebe, obrázek menší */
+  @media (max-aspect-ratio:3/4){
+    body{overflow:auto; height:auto; min-height:100vh;}
+    .qwrap{flex-direction:column; gap:1.5vh;}
+    .pic{flex:0 0 auto; width:100%;}
+    .pic img,.pic svg{max-height:30vh;}
     .opts{grid-template-columns:1fr;}
-    header h1{font-size:7vmin;} .q{font-size:5.5vmin;} button.opt{font-size:4.5vmin;}
-    .pic img,.pic svg{width:80vmin; height:55vmin;}
+    header h1{font-size:5vw;} .q{font-size:5vw;} button.opt{font-size:4.5vw; padding:3vw;}
+    .feedback{font-size:5vw;} .next{font-size:5vw;}
   }
 </style>
 </head>
@@ -173,13 +185,17 @@ function renderQuestion(){
   const item = QUESTIONS[current];
   screen.innerHTML = `
     <div class="progress">Otázka ${current+1} z ${QUESTIONS.length} &nbsp; • &nbsp; Body: ${score}</div>
-    <div class="pic">${pic(item.key, item.file)}</div>
-    <p class="q">${item.q}</p>
-    <div class="opts">
-      ${item.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')}
+    <div class="qwrap">
+      <div class="pic">${pic(item.key, item.file)}</div>
+      <div class="qside">
+        <p class="q">${item.q}</p>
+        <div class="opts">
+          ${item.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')}
+        </div>
+        <div class="feedback" id="fb"></div>
+        <button class="next" id="next">Další otázka ▶</button>
+      </div>
     </div>
-    <div class="feedback" id="fb"></div>
-    <button class="next" id="next">Další otázka ▶</button>
   `;
   screen.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",onAnswer));
   screen.querySelector("#next").addEventListener("click",onNext);
